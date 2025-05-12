@@ -25,13 +25,33 @@ export const seedInitialData = async () => {
     const reportsSnapshot = await getDocs(reportsCollectionRef);
     if (reportsSnapshot.empty) {
       const batch = writeBatch(db);
-      rawMockReports.forEach((report) => {
-        const docRef = doc(reportsCollectionRef, report.id); // Use mock ID for consistency if needed, or let Firestore auto-generate
-        const reportDataForFirestore = {
-          ...report,
-          dateOfIncidence: report.dateOfIncidence, // Already a string
-          submittedAt: Timestamp.fromDate(new Date(report.submittedAt)), // Convert to Firestore Timestamp
+      rawMockReports.forEach((mockReportItem) => {
+        const docRef = doc(reportsCollectionRef, mockReportItem.id); // Use mock ID
+
+        // Destructure to handle potentially undefined optional fields
+        const {
+          id, // Exclude id from data being set, as it's used for docRef
+          submittedAt,
+          dateOfIncidence,
+          mediaProof,
+          mediaProofUrl,
+          ...otherData
+        } = mockReportItem;
+
+        const reportDataForFirestore: any = {
+          ...otherData, // Spread the rest of the report data
+          dateOfIncidence: dateOfIncidence, // Already a string
+          submittedAt: Timestamp.fromDate(new Date(submittedAt)), // Convert to Firestore Timestamp
         };
+
+        // Conditionally add optional fields only if they are not undefined
+        if (mediaProof !== undefined) {
+          reportDataForFirestore.mediaProof = mediaProof;
+        }
+        if (mediaProofUrl !== undefined) {
+          reportDataForFirestore.mediaProofUrl = mediaProofUrl;
+        }
+
         batch.set(docRef, reportDataForFirestore);
       });
       await batch.commit();
@@ -47,11 +67,12 @@ export const seedInitialData = async () => {
       const batch = writeBatch(db);
       rawMockAchievements.forEach((achievement) => {
         const docRef = doc(achievementsCollectionRef, achievement.id); // Use mock ID
+        // Firestore cannot store React components, so iconName is used
+        const { icon, ...restOfAchievement } = achievement; 
         const achievementDataForFirestore: Omit<Achievement, 'icon'> & { iconName?: string } = {
-          ...achievement,
-          iconName: getIconName(achievement.icon),
+          ...restOfAchievement,
+          iconName: achievement.iconName || getIconName(icon), // Use existing iconName or derive it
         };
-        delete (achievementDataForFirestore as any).icon; // Remove actual component
         batch.set(docRef, achievementDataForFirestore);
       });
       await batch.commit();
