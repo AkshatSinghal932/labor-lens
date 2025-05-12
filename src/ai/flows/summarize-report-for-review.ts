@@ -1,0 +1,65 @@
+// 'use server'
+
+/**
+ * @fileOverview Summarizes a labor report for moderator review, highlighting key details and potential severity.
+ *
+ * - summarizeReport - A function that summarizes the report.
+ * - SummarizeReportInput - The input type for the summarizeReport function.
+ * - SummarizeReportOutput - The return type for the summarizeReport function.
+ */
+
+'use server';
+
+import {ai} from '@/ai/genkit';
+import {z} from 'genkit';
+
+const SummarizeReportInputSchema = z.object({
+  date: z.string().describe('The date of the reported incidence.'),
+  location: z.string().describe('The location where the incident occurred.'),
+  type: z.string().describe('The type of labor issue reported (e.g., wage theft, safety violation).'),
+  description: z.string().describe('A detailed description of the incident.'),
+  proof: z.string().optional().describe('A data URI of photo or video evidence, must include a MIME type and use Base64 encoding. Expected format: \'data:<mimetype>;base64,<encoded_data>\'.'),
+});
+export type SummarizeReportInput = z.infer<typeof SummarizeReportInputSchema>;
+
+const SummarizeReportOutputSchema = z.object({
+  summary: z.string().describe('A concise summary of the report, including key details.'),
+  severity: z.string().describe('An assessment of the potential severity of the reported issue (e.g., low, medium, high).'),
+  actionable: z.boolean().describe('Whether the report contains actionable information that warrants further investigation.'),
+});
+export type SummarizeReportOutput = z.infer<typeof SummarizeReportOutputSchema>;
+
+export async function summarizeReport(input: SummarizeReportInput): Promise<SummarizeReportOutput> {
+  return summarizeReportFlow(input);
+}
+
+const summarizeReportPrompt = ai.definePrompt({
+  name: 'summarizeReportPrompt',
+  input: {schema: SummarizeReportInputSchema},
+  output: {schema: SummarizeReportOutputSchema},
+  prompt: `You are an AI assistant helping moderators quickly assess labor exploitation reports. Summarize the key details of the report and assess its potential severity (low, medium, high). Indicate whether the report contains actionable information that warrants further investigation.
+
+Report Details:
+Date: {{{date}}}
+Location: {{{location}}}
+Type of Issue: {{{type}}}
+Description: {{{description}}}
+Evidence: {{#if proof}}{{media url=proof}}{{else}}No evidence provided{{/if}}
+
+Respond in the following format:
+Summary: ...
+Severity: ...
+Actionable: ... (true/false)`,
+});
+
+const summarizeReportFlow = ai.defineFlow(
+  {
+    name: 'summarizeReportFlow',
+    inputSchema: SummarizeReportInputSchema,
+    outputSchema: SummarizeReportOutputSchema,
+  },
+  async input => {
+    const {output} = await summarizeReportPrompt(input);
+    return output!;
+  }
+);
