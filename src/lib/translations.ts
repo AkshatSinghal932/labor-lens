@@ -1,3 +1,4 @@
+
 import type { Translations } from '@/types';
 
 export const translations: Translations = {
@@ -21,7 +22,8 @@ export const translations: Translations = {
   submitReportTitle: { en: 'Submit a New Report', hi: 'नई रिपोर्ट जमा करें' },
   submitReportDescription: { en: 'Detail labour exploitation, unfair wages, or unsafe working conditions.', hi: 'श्रमिक शोषण, अनुचित मजदूरी, या असुरक्षित कामकाजी परिस्थितियों का विवरण दें।' },
   dateOfIncidenceLabel: { en: 'Date of Incidence', hi: 'घटना की तारीख' },
-  locationLabel: { en: 'Location (e.g., Address, City)', hi: 'स्थान (उदा. पता, शहर)' },
+  locationLabel: { en: 'Location (e.g., Address, Area)', hi: 'स्थान (उदा. पता, क्षेत्र)' },
+  cityLabel: { en: 'City', hi: 'शहर' },
   typeOfIncidenceLabel: { en: 'Type of Incidence', hi: 'घटना का प्रकार' },
   selectTypePlaceholder: { en: 'Select type', hi: 'प्रकार चुनें' },
   descriptionLabel: { en: 'Description of Incidence', hi: 'घटना का विवरण' },

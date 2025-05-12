@@ -4,6 +4,7 @@ export interface Report {
   anonymousUserId: string;
   dateOfIncidence: string; // ISO string date
   location: string; // For simplicity, a string address. Could be { lat: number, lng: number }
+  city: string; // City where the incidence occurred
   typeOfIncidence: ReportType;
   description: string;
   mediaProof?: {

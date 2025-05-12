@@ -1,3 +1,4 @@
+
 // 'use server'
 
 /**
@@ -15,7 +16,8 @@ import {z} from 'genkit';
 
 const SummarizeReportInputSchema = z.object({
   date: z.string().describe('The date of the reported incidence.'),
-  location: z.string().describe('The location where the incident occurred.'),
+  location: z.string().describe('The specific address or area where the incident occurred.'),
+  city: z.string().describe('The city where the incident occurred.'),
   type: z.string().describe('The type of labor issue reported (e.g., wage theft, safety violation).'),
   description: z.string().describe('A detailed description of the incident.'),
   proof: z.string().optional().describe('A data URI of photo or video evidence, must include a MIME type and use Base64 encoding. Expected format: \'data:<mimetype>;base64,<encoded_data>\'.'),
@@ -42,6 +44,7 @@ const summarizeReportPrompt = ai.definePrompt({
 Report Details:
 Date: {{{date}}}
 Location: {{{location}}}
+City: {{{city}}}
 Type of Issue: {{{type}}}
 Description: {{{description}}}
 Evidence: {{#if proof}}{{media url=proof}}{{else}}No evidence provided{{/if}}

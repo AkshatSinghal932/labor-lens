@@ -1,3 +1,4 @@
+
 "use server";
 
 import { prioritizeReportsBySeverity } from '@/ai/flows/prioritize-reports-by-severity';
@@ -9,6 +10,7 @@ import { z } from 'zod';
 const reportSchema = z.object({
   dateOfIncidence: z.string().datetime(),
   location: z.string().min(1),
+  city: z.string().min(1),
   typeOfIncidence: z.enum(['Wage Theft', 'Safety Violation', 'Unfair Wages', 'Unsafe Working Conditions', 'Other']),
   description: z.string().min(10),
   anonymousUserId: z.string().uuid(),
@@ -28,6 +30,7 @@ export async function submitReportAction(formData: FormData) {
     const rawData = {
       dateOfIncidence: formData.get('dateOfIncidence') as string,
       location: formData.get('location') as string,
+      city: formData.get('city') as string,
       typeOfIncidence: formData.get('typeOfIncidence') as ReportType,
       description: formData.get('description') as string,
       anonymousUserId: formData.get('anonymousUserId') as string,
@@ -37,7 +40,7 @@ export async function submitReportAction(formData: FormData) {
     const validation = reportSchema.safeParse(rawData);
     if (!validation.success) {
       console.error("Validation errors:", validation.error.flatten().fieldErrors);
-      return { success: false, error: "Invalid form data. " + validation.error.flatten().fieldErrors };
+      return { success: false, error: "Invalid form data. " + JSON.stringify(validation.error.flatten().fieldErrors) };
     }
 
     const validatedData = validation.data;
@@ -46,7 +49,7 @@ export async function submitReportAction(formData: FormData) {
     let aiSummary;
     try {
         aiSummary = await prioritizeReportsBySeverity({
-        reportText: validatedData.description,
+        reportText: validatedData.description, // City information could be added here if the AI model is trained to use it for prioritization
       });
     } catch (aiError) {
       console.error("AI prioritization error:", aiError);
@@ -54,6 +57,16 @@ export async function submitReportAction(formData: FormData) {
       aiSummary = { severityScore: 0, reasoning: "AI analysis failed.", actionable: false };
     }
     
+    // Placeholder for dispatching logic
+    // In a real application, this would involve looking up contacts based on city and incident type,
+    // and then using a notification service (e.g., email, SMS, API call).
+    console.log(`[DISPATCH ACTION REQUIRED] Report for city: ${validatedData.city}, type: ${validatedData.typeOfIncidence}. Send to relevant authorities and media outlets.`);
+    // Example:
+    // if (validatedData.city === "Springfield" && validatedData.typeOfIncidence === "Safety Violation") {
+    //   await sendEmailTo("springfield_safety_dept@example.com", "New Safety Violation Report", JSON.stringify(validatedData));
+    //   await sendToJournalist("journalist_contact_springfield@example.com", "Tip: New Labor Report", JSON.stringify(validatedData));
+    // }
+
 
     // 2. Store report in Firebase (conceptual)
     // const reportToStore: Omit<Report, 'id' | 'submittedAt' | 'status' | 'mediaProofUrl'> = {

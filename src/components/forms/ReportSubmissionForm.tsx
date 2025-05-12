@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -42,10 +43,11 @@ export default function ReportSubmissionForm() {
       required_error: t('fieldRequired'),
     }),
     location: z.string().min(1, t('fieldRequired')),
+    city: z.string().min(1, t('fieldRequired')),
     typeOfIncidence: z.enum(reportTypes, {
       required_error: t('fieldRequired'),
     }),
-    description: z.string().min(10, t('fieldRequired')), // Increased min length
+    description: z.string().min(10, t('fieldRequired')),
     mediaProof: z.instanceof(File).optional(),
   });
 
@@ -55,6 +57,7 @@ export default function ReportSubmissionForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       location: "",
+      city: "",
       description: "",
     },
   });
@@ -69,6 +72,7 @@ export default function ReportSubmissionForm() {
     const formData = new FormData();
     formData.append('dateOfIncidence', values.dateOfIncidence.toISOString());
     formData.append('location', values.location);
+    formData.append('city', values.city);
     formData.append('typeOfIncidence', values.typeOfIncidence);
     formData.append('description', values.description);
     formData.append('anonymousUserId', anonymousId);
@@ -186,6 +190,21 @@ export default function ReportSubmissionForm() {
             </FormItem>
           )}
         />
+
+        <FormField
+          control={form.control}
+          name="city"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t('cityLabel')}</FormLabel>
+              <FormControl>
+                <Input placeholder="e.g., Springfield, Metropolis" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
 
         <FormField
           control={form.control}

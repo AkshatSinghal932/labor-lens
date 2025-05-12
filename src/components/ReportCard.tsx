@@ -1,8 +1,9 @@
+
 import type { Report } from '@/types';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MapPin, CalendarDays, Tag, AlertCircle, CheckCircle, ShieldAlert, HandCoins, Scale, HardHat, FileText } from 'lucide-react';
+import { MapPin, CalendarDays, Tag, AlertCircle, CheckCircle, ShieldAlert, HandCoins, Scale, HardHat, FileText, Building } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface ReportCardProps {
@@ -65,6 +66,10 @@ export default function ReportCard({ report }: ReportCardProps) {
         <div className="flex items-center gap-2 text-sm">
           <MapPin className="h-4 w-4 text-muted-foreground" />
           <span>{t('location')}: {report.location}</span>
+        </div>
+        <div className="flex items-center gap-2 text-sm">
+          <Building className="h-4 w-4 text-muted-foreground" />
+          <span>{t('cityLabel')}: {report.city}</span>
         </div>
         <div className="flex items-center gap-2 text-sm">
           <Tag className="h-4 w-4 text-muted-foreground" />

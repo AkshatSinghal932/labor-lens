@@ -1,3 +1,4 @@
+
 import type { Achievement, Report, ReportType } from '@/types';
 import { Award, ShieldCheck, Users, TrendingUp } from 'lucide-react';
 
@@ -46,12 +47,21 @@ const reportDescriptions = [
 ];
 
 const locations = [
-  "123 Elm Street, Springfield",
-  "456 Oak Avenue, Metropolis",
-  "789 Pine Lane, Gotham City",
-  "101 Maple Drive, Star City",
-  "202 Birch Road, Central City",
-  "303 Cedar Court, Coast City"
+  "123 Elm Street",
+  "456 Oak Avenue",
+  "789 Pine Lane",
+  "101 Maple Drive",
+  "202 Birch Road",
+  "303 Cedar Court"
+];
+
+const cities = [
+  "Springfield",
+  "Metropolis",
+  "Gotham City",
+  "Star City",
+  "Central City",
+  "Coast City"
 ];
 
 const reportTypesArray: ReportType[] = ['Wage Theft', 'Safety Violation', 'Unfair Wages', 'Unsafe Working Conditions'];
@@ -67,6 +77,7 @@ export const mockReports: Report[] = Array.from({ length: 6 }, (_, i) => {
     anonymousUserId: `user-${(i % 3) + 1}`, // Simulating a few different users
     dateOfIncidence: randomDate.toISOString().split('T')[0],
     location: locations[i % locations.length],
+    city: cities[i % cities.length],
     typeOfIncidence: reportType,
     description: reportDescriptions[i % reportDescriptions.length],
     submittedAt: new Date(randomDate.getTime() + Math.floor(Math.random() * 24 * 60 * 60 * 1000)).toISOString(),
