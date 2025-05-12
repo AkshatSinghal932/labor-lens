@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import ReportCard from '@/components/ReportCard';
-import { mockReports } from '@/data/mock';
 import type { Report as ReportType, ReportType as TReportType } from '@/types';
 import { reportTypes } from '@/types';
 import { Input } from '@/components/ui/input';
@@ -11,6 +10,8 @@ import { Button } from '@/components/ui/button';
 import { Search, Filter, ListFilter } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Skeleton } from '@/components/ui/skeleton';
+import { db } from '@/lib/firebase';
+import { collection, getDocs, query, orderBy, Timestamp, where, QueryConstraint } from 'firebase/firestore';
 
 export default function ViewReportsPage() {
   const { t, language } = useLanguage();
@@ -20,16 +21,45 @@ export default function ViewReportsPage() {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState<TReportType | 'all'>('all');
-  // Location filter can be a text input for simplicity
-  const [locationFilter, setLocationFilter] = useState('');
+  const [locationFilter, setLocationFilter] = useState(''); // City filter
 
   useEffect(() => {
-    // Simulate fetching all reports
-    setTimeout(() => {
-      setAllReports(mockReports);
-      setFilteredReports(mockReports);
+    const fetchAllReports = async () => {
+      setIsLoading(true);
+      try {
+        if (!db) {
+          console.error("Firestore not initialized");
+          setAllReports([]);
+          setFilteredReports([]);
+          setIsLoading(false);
+          return;
+        }
+        const reportsQuery = query(collection(db, 'reports'), orderBy('submittedAt', 'desc'));
+        const querySnapshot = await getDocs(reportsQuery);
+        const fetchedReports = querySnapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            ...data,
+            submittedAt: (data.submittedAt as Timestamp).toDate().toISOString(),
+            dateOfIncidence: data.dateOfIncidence, 
+          } as ReportType;
+        });
+        setAllReports(fetchedReports);
+        setFilteredReports(fetchedReports); // Initially display all
+      } catch (error) {
+        console.error("Error fetching all reports:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    if (process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID) {
+      fetchAllReports();
+    } else {
       setIsLoading(false);
-    }, 1000);
+      console.warn("Firebase Project ID not set. Skipping data fetching for reports page.");
+    }
   }, []);
 
   useEffect(() => {
@@ -38,7 +68,9 @@ export default function ViewReportsPage() {
     if (searchTerm) {
       reports = reports.filter(report =>
         report.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        report.id.toLowerCase().includes(searchTerm.toLowerCase())
+        report.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        report.location.toLowerCase().includes(searchTerm.toLowerCase()) || // Search in location too
+        report.city.toLowerCase().includes(searchTerm.toLowerCase()) // Search in city too
       );
     }
 
@@ -46,9 +78,9 @@ export default function ViewReportsPage() {
       reports = reports.filter(report => report.typeOfIncidence === selectedType);
     }
 
-    if (locationFilter) {
+    if (locationFilter) { // This filters by city
       reports = reports.filter(report =>
-        report.location.toLowerCase().includes(locationFilter.toLowerCase())
+        report.city.toLowerCase().includes(locationFilter.toLowerCase())
       );
     }
 
@@ -81,7 +113,7 @@ export default function ViewReportsPage() {
             </label>
             <Input
               id="searchTerm"
-              placeholder="Search by keyword or ID..."
+              placeholder="Keyword, ID, location, city..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -106,11 +138,11 @@ export default function ViewReportsPage() {
           <div>
             <label htmlFor="locationFilter" className="block text-sm font-medium text-muted-foreground mb-1">
               <ListFilter className="inline h-4 w-4 mr-1" />
-              {t('filterByLocation')}
+              {t('filterByLocation')} (City)
             </label>
             <Input
               id="locationFilter"
-              placeholder="Enter city or area..."
+              placeholder="Enter city..."
               value={locationFilter}
               onChange={(e) => setLocationFilter(e.target.value)}
             />

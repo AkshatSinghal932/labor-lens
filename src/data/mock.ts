@@ -1,13 +1,14 @@
 
-import type { Achievement, Report, ReportType } from '@/types';
-import { Award, ShieldCheck, Users, TrendingUp } from 'lucide-react';
+import type { Achievement as AchievementType, Report, ReportType } from '@/types';
+// Lucide icons are imported dynamically in AchievementCard based on iconName
+// import { Award, ShieldCheck, Users, TrendingUp } from 'lucide-react'; 
 
-export const mockAchievements: Achievement[] = [
+export const mockAchievements: Array<Omit<AchievementType, 'iconName'> & {icon?: React.ElementType}> = [
   {
     id: '1',
     title: '1000+ Reports Processed',
     description: 'Successfully processed over a thousand reports, aiding in addressing labor issues.',
-    icon: TrendingUp,
+    iconName: 'TrendingUp', // Storing name instead of component
     imageUrl: 'https://picsum.photos/seed/achievement1/300/200',
     // data-ai-hint="community support"
   },
@@ -15,7 +16,7 @@ export const mockAchievements: Achievement[] = [
     id: '2',
     title: 'Safe Workplaces Initiative',
     description: 'Contributed to policy changes leading to safer working environments in 5 regions.',
-    icon: ShieldCheck,
+    iconName: 'ShieldCheck',
     imageUrl: 'https://picsum.photos/seed/achievement2/300/200',
     // data-ai-hint="workplace safety"
   },
@@ -23,7 +24,7 @@ export const mockAchievements: Achievement[] = [
     id: '3',
     title: 'Fair Wage Advocacy Success',
     description: 'Helped recover $50,000 in unpaid wages for workers through highlighted reports.',
-    icon: Award,
+    iconName: 'Award',
     imageUrl: 'https://picsum.photos/seed/achievement3/300/200',
     // data-ai-hint="financial justice"
   },
@@ -31,7 +32,7 @@ export const mockAchievements: Achievement[] = [
     id: '4',
     title: 'Community Awareness Raised',
     description: 'Reached 100,000+ individuals with awareness campaigns on labor rights.',
-    icon: Users,
+    iconName: 'Users',
     imageUrl: 'https://picsum.photos/seed/achievement4/300/200',
     // data-ai-hint="public awareness"
   },
@@ -73,8 +74,8 @@ export const mockReports: Report[] = Array.from({ length: 6 }, (_, i) => {
   const severityScore = Math.floor(Math.random() * 7) + 4; // Score between 4 and 10
 
   return {
-    id: `report-${i + 1}`,
-    anonymousUserId: `user-${(i % 3) + 1}`, // Simulating a few different users
+    id: `report-${String(i + 1).padStart(3, '0')}`, // Ensure unique IDs that can be used as Firestore doc IDs
+    anonymousUserId: `user-${(i % 3) + 1}`, 
     dateOfIncidence: randomDate.toISOString().split('T')[0],
     location: locations[i % locations.length],
     city: cities[i % cities.length],
@@ -88,5 +89,6 @@ export const mockReports: Report[] = Array.from({ length: 6 }, (_, i) => {
       actionable: isActionable,
     },
     mediaProof: i % 2 === 0 ? { name: 'evidence.jpg', type: 'image/jpeg' } : undefined,
+    // mediaProofUrl will be undefined for mock data initially
   };
 });

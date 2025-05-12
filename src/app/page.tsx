@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { mockReports, mockAchievements } from '@/data/mock';
 import type { Report as ReportType, Achievement as AchievementType } from '@/types';
 import ReportCard from '@/components/ReportCard';
 import AchievementCard from '@/components/AchievementCard';
@@ -12,6 +11,8 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useUserLocation } from '@/hooks/useUserLocation';
 import { MapPin, Award } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { db } from '@/lib/firebase';
+import { collection, getDocs, query, orderBy, limit, Timestamp } from 'firebase/firestore';
 
 export default function DashboardPage() {
   const [reports, setReports] = useState<ReportType[]>([]);
@@ -22,19 +23,70 @@ export default function DashboardPage() {
   const { location: userLocation, error: locationError, loading: locationLoading } = useUserLocation();
 
   useEffect(() => {
-    // Simulate API calls
-    setTimeout(() => {
-      // For now, just use all mock reports as "nearby"
-      // In a real app, you'd filter based on userLocation
-      setReports(mockReports.slice(0, 3)); // Show 3 nearby reports
-      setIsLoadingReports(false);
-    }, 1000);
+    const fetchReports = async () => {
+      setIsLoadingReports(true);
+      try {
+        if (!db) {
+          console.error("Firestore not initialized");
+          setReports([]);
+          setIsLoadingReports(false);
+          return;
+        }
+        // Fetch recent reports, ordered by submission date, limited to 3
+        // In a real app, you'd filter by userLocation if available
+        const reportsQuery = query(collection(db, 'reports'), orderBy('submittedAt', 'desc'), limit(3));
+        const querySnapshot = await getDocs(reportsQuery);
+        const fetchedReports = querySnapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            ...data,
+            submittedAt: (data.submittedAt as Timestamp).toDate().toISOString(),
+            dateOfIncidence: data.dateOfIncidence, // Should be already a string
+          } as ReportType;
+        });
+        setReports(fetchedReports);
+      } catch (error) {
+        console.error("Error fetching reports:", error);
+        // Potentially set an error state to display to user
+      } finally {
+        setIsLoadingReports(false);
+      }
+    };
 
-    setTimeout(() => {
-      setAchievements(mockAchievements);
+    const fetchAchievements = async () => {
+      setIsLoadingAchievements(true);
+      try {
+        if (!db) {
+          console.error("Firestore not initialized");
+          setAchievements([]);
+          setIsLoadingAchievements(false);
+          return;
+        }
+        const achievementsQuery = query(collection(db, 'achievements'), orderBy('title')); // Example ordering
+        const querySnapshot = await getDocs(achievementsQuery);
+        const fetchedAchievements = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        } as AchievementType));
+        setAchievements(fetchedAchievements);
+      } catch (error) {
+        console.error("Error fetching achievements:", error);
+      } finally {
+        setIsLoadingAchievements(false);
+      }
+    };
+    
+    if (process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID) {
+      fetchReports();
+      fetchAchievements();
+    } else {
+      setIsLoadingReports(false);
       setIsLoadingAchievements(false);
-    }, 500);
-  }, []);
+      console.warn("Firebase Project ID not set. Skipping data fetching for dashboard.");
+    }
+
+  }, []); // Run once on mount
 
   return (
     <div className="container mx-auto py-8 px-4 md:px-0">
@@ -92,13 +144,16 @@ export default function DashboardPage() {
              </div>
            ))}
          </div>
-        ) : (
+        ) : achievements.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {achievements.map((achievement) => (
               <AchievementCard key={achievement.id} achievement={achievement} />
             ))}
           </div>
-        )}
+        ) : (
+          <p className="text-center text-muted-foreground py-8">No achievements to display.</p>
+        )
+        }
       </section>
     </div>
   );

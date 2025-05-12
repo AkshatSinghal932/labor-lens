@@ -1,25 +1,24 @@
 
 export interface Report {
-  id: string;
+  id: string; // Firestore document ID
   anonymousUserId: string;
   dateOfIncidence: string; // ISO string date
-  location: string; // For simplicity, a string address. Could be { lat: number, lng: number }
-  city: string; // City where the incidence occurred
+  location: string;
+  city: string;
   typeOfIncidence: ReportType;
   description: string;
-  mediaProof?: {
+  mediaProof?: { // For mock data consistency and form display
     name: string;
-    type: string; // MIME type
-    // dataUri?: string; // Optional: if we were to handle file uploads
+    type: string; 
   };
-  submittedAt: string; // ISO string date
+  mediaProofUrl?: string; // URL from Firebase Storage
+  submittedAt: string; // ISO string date (converted from Firestore Timestamp)
   status: 'Pending' | 'Reviewed' | 'ActionTaken';
   aiPrioritization?: {
     severityScore: number;
     reasoning: string;
     actionable: boolean;
   };
-  // For geo queries, a geohash or lat/lng would be stored if using real geolocation
 }
 
 export type ReportType = 'Wage Theft' | 'Safety Violation' | 'Unfair Wages' | 'Unsafe Working Conditions' | 'Other';
@@ -27,10 +26,10 @@ export type ReportType = 'Wage Theft' | 'Safety Violation' | 'Unfair Wages' | 'U
 export const reportTypes: ReportType[] = ['Wage Theft', 'Safety Violation', 'Unfair Wages', 'Unsafe Working Conditions', 'Other'];
 
 export interface Achievement {
-  id: string;
+  id: string; // Firestore document ID
   title: string;
   description: string;
-  icon?: React.ElementType;
+  iconName?: keyof typeof import('lucide-react'); // Store icon name for dynamic import
   imageUrl?: string;
 }
 
