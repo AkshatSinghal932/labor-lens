@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -49,6 +50,7 @@ export async function prioritizeReportsBySeverity(
 
 const prioritizeReportsBySeverityPrompt = ai.definePrompt({
   name: 'prioritizeReportsBySeverityPrompt',
+  model: 'googleai/gemini-2.0-flash',
   input: {schema: PrioritizeReportsBySeverityInputSchema},
   output: {schema: PrioritizeReportsBySeverityOutputSchema},
   prompt: `You are an AI assistant designed to evaluate the severity of labor exploitation reports. Analyze the provided report text and assign a severity score from 1 to 10 (1 being the least severe, 10 being the most severe). Also, provide a brief reasoning for the assigned score. Finally, based on whether the report contains specific, actionable information that suggests a violation of labor laws or ethical standards, determine if the report warrants immediate review (actionable = true) or not (actionable = false).
@@ -67,3 +69,4 @@ const prioritizeReportsBySeverityFlow = ai.defineFlow(
     return output!;
   }
 );
+

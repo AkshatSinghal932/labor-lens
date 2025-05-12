@@ -1,5 +1,5 @@
 
-// 'use server'
+'use server';
 
 /**
  * @fileOverview Summarizes a labor report for moderator review, highlighting key details and potential severity.
@@ -8,8 +8,6 @@
  * - SummarizeReportInput - The input type for the summarizeReport function.
  * - SummarizeReportOutput - The return type for the summarizeReport function.
  */
-
-'use server';
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
@@ -37,6 +35,7 @@ export async function summarizeReport(input: SummarizeReportInput): Promise<Summ
 
 const summarizeReportPrompt = ai.definePrompt({
   name: 'summarizeReportPrompt',
+  model: 'googleai/gemini-2.0-flash',
   input: {schema: SummarizeReportInputSchema},
   output: {schema: SummarizeReportOutputSchema},
   prompt: `You are an AI assistant helping moderators quickly assess labor exploitation reports. Summarize the key details of the report and assess its potential severity (low, medium, high). Indicate whether the report contains actionable information that warrants further investigation.
@@ -66,3 +65,4 @@ const summarizeReportFlow = ai.defineFlow(
     return output!;
   }
 );
+

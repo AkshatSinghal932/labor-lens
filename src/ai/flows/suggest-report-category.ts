@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview AI flow to suggest a category for a user's report based on the text content.
@@ -27,6 +28,7 @@ export async function suggestReportCategory(input: SuggestReportCategoryInput): 
 
 const prompt = ai.definePrompt({
   name: 'suggestReportCategoryPrompt',
+  model: 'googleai/gemini-2.0-flash',
   input: {schema: SuggestReportCategoryInputSchema},
   output: {schema: SuggestReportCategoryOutputSchema},
   prompt: `Based on the following report text, suggest a category for the report. Also, provide a confidence level (0-1) for your suggestion.\n\nReport Text: {{{reportText}}}`,
@@ -43,3 +45,4 @@ const suggestReportCategoryFlow = ai.defineFlow(
     return output!;
   }
 );
+
