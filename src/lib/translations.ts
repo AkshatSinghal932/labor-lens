@@ -55,11 +55,11 @@ export const translations: Translations = {
   location: { en: 'Location', hi: 'स्थान' },
   type: { en: 'Type', hi: 'प्रकार' },
   status: { en: 'Status', hi: 'स्थिति' },
-  severityScore: { en: 'AI Severity Score', hi: 'एआई गंभीरता स्कोर' },
-  actionable: { en: 'AI Actionable', hi: 'एआई कार्रवाई योग्य' },
+  submittedAt: { en: 'Submitted At', hi: 'जमा करने का समय'},
   yes: { en: 'Yes', hi: 'हाँ' },
   no: { en: 'No', hi: 'नहीं' },
 
   // General
   loading: { en: 'Loading...', hi: 'लोड हो रहा है...' },
 };
+

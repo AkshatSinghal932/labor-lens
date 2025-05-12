@@ -47,10 +47,17 @@ export const seedInitialData = async () => {
         // Conditionally add optional fields only if they are not undefined
         if (mediaProof !== undefined) {
           reportDataForFirestore.mediaProof = mediaProof;
+        } else {
+          // Ensure field is not set if undefined
+          delete reportDataForFirestore.mediaProof;
         }
+        
         if (mediaProofUrl !== undefined) {
           reportDataForFirestore.mediaProofUrl = mediaProofUrl;
+        } else {
+          delete reportDataForFirestore.mediaProofUrl;
         }
+
 
         batch.set(docRef, reportDataForFirestore);
       });
@@ -84,3 +91,4 @@ export const seedInitialData = async () => {
     console.error("Error seeding data:", error);
   }
 };
+

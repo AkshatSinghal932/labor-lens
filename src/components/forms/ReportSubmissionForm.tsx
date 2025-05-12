@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,12 +22,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { CalendarIcon, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { hi } from 'date-fns/locale/hi'; // Import for Hindi
-import { enUS } from 'date-fns/locale/en-US'; // Import for English (US)
+// Correctly import date-fns locales for client components
+import { hi } from 'date-fns/locale/hi';
+import { enUS } from 'date-fns/locale/en-US';
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { ReportType } from "@/types";
 import { reportTypes } from "@/types";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { submitReportAction } from "@/app/submit-report/actions";
 import { useAnonymousId } from "@/hooks/useAnonymousId";
@@ -38,6 +40,12 @@ export default function ReportSubmissionForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [dateFnsLocale, setDateFnsLocale] = useState(enUS);
+
+  useEffect(() => {
+    setDateFnsLocale(language === 'hi' ? hi : enUS);
+  }, [language]);
+
 
   const formSchema = z.object({
     dateOfIncidence: z.date({
@@ -49,7 +57,7 @@ export default function ReportSubmissionForm() {
       required_error: t('fieldRequired'),
     }),
     description: z.string().min(10, t('fieldRequired')),
-    mediaProof: z.instanceof(File).optional(),
+    mediaProof: z.instanceof(File).optional().nullable(),
   });
 
   type FormValues = z.infer<typeof formSchema>;
@@ -60,6 +68,7 @@ export default function ReportSubmissionForm() {
       location: "",
       city: "",
       description: "",
+      mediaProof: null,
       // dateOfIncidence will be undefined initially
     },
   });
@@ -87,7 +96,7 @@ export default function ReportSubmissionForm() {
       if (result.success) {
         toast({
           title: t('reportSubmittedSuccess'),
-          description: `Report ID: ${result.reportId}. Severity: ${result.aiSummary?.severityScore}/10. Actionable: ${result.aiSummary?.actionable ? t('yes') : t('no')}`,
+          description: `${t('reportId')}: ${result.reportId}`,
         });
         form.reset();
         setFilePreview(null);
@@ -117,7 +126,7 @@ export default function ReportSubmissionForm() {
         setFilePreview(null); // No preview for non-image files
       }
     } else {
-      form.setValue("mediaProof", undefined);
+      form.setValue("mediaProof", null);
       setFilePreview(null);
       setFileName(null);
     }
@@ -154,7 +163,7 @@ export default function ReportSubmissionForm() {
                       )}
                     >
                       {field.value ? (
-                        format(field.value, "PPP", { locale: language === 'hi' ? hi : enUS })
+                        format(field.value, "PPP", { locale: dateFnsLocale })
                       ) : (
                         <span>{t('selectDate')}</span>
                       )}
@@ -171,6 +180,7 @@ export default function ReportSubmissionForm() {
                       date > new Date() || date < new Date("1900-01-01")
                     }
                     initialFocus
+                    locale={dateFnsLocale}
                   />
                 </PopoverContent>
               </Popover>
@@ -251,19 +261,29 @@ export default function ReportSubmissionForm() {
           )}
         />
         
-        <FormItem>
-            <FormLabel>{t('mediaProofLabel')}</FormLabel>
-            <FormControl>
-                <Input type="file" accept="image/*,video/*" onChange={handleFileChange} />
-            </FormControl>
-            {fileName && <FormDescription>Selected file: {fileName}</FormDescription>}
-            {filePreview && (
-                <div className="mt-2">
-                <img src={filePreview} alt="Selected media preview" className="max-h-48 rounded-md border" data-ai-hint="evidence preview" />
-                </div>
+        <FormField
+            control={form.control}
+            name="mediaProof"
+            render={({ field }) => ( // field is not directly used for input value, but for setValue
+            <FormItem>
+                <FormLabel>{t('mediaProofLabel')}</FormLabel>
+                <FormControl>
+                    <Input 
+                        type="file" 
+                        accept="image/*,video/*" 
+                        onChange={handleFileChange} 
+                    />
+                </FormControl>
+                {fileName && <FormDescription>Selected file: {fileName}</FormDescription>}
+                {filePreview && (
+                    <div className="mt-2">
+                    <img src={filePreview} alt="Selected media preview" className="max-h-48 rounded-md border" data-ai-hint="evidence preview" />
+                    </div>
+                )}
+                <FormMessage />
+            </FormItem>
             )}
-            <FormMessage />
-        </FormItem>
+        />
 
 
         <Button type="submit" className="w-full" disabled={isSubmitting}>

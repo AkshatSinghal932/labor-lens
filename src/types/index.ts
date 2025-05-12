@@ -14,11 +14,6 @@ export interface Report {
   mediaProofUrl?: string; // URL from Firebase Storage
   submittedAt: string; // ISO string date (converted from Firestore Timestamp)
   status: 'Pending' | 'Reviewed' | 'ActionTaken';
-  aiPrioritization?: {
-    severityScore: number;
-    reasoning: string;
-    actionable: boolean;
-  };
 }
 
 export type ReportType = 'Wage Theft' | 'Safety Violation' | 'Unfair Wages' | 'Unsafe Working Conditions' | 'Other';
@@ -41,3 +36,4 @@ export interface Translations {
 }
 
 export type Language = 'en' | 'hi';
+

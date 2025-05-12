@@ -3,7 +3,7 @@ import type { Report } from '@/types';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MapPin, CalendarDays, Tag, AlertCircle, CheckCircle, ShieldAlert, HandCoins, Scale, HardHat, FileText, Building } from 'lucide-react';
+import { MapPin, CalendarDays, Tag, HandCoins, Scale, HardHat, FileText, Building, ShieldAlert } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface ReportCardProps {
@@ -76,18 +76,6 @@ export default function ReportCard({ report }: ReportCardProps) {
           <span>{t('type')}: {getTranslatedReportType(report.typeOfIncidence)}</span>
         </div>
         <p className="text-sm line-clamp-3">{report.description}</p>
-        {report.aiPrioritization && (
-          <div className="mt-2 p-2 border border-dashed rounded-md bg-muted/50">
-            <h4 className="text-xs font-semibold text-foreground mb-1">{t('aiPrioritization', 'AI Analysis')}</h4>
-            <div className="flex items-center gap-2 text-xs">
-              {report.aiPrioritization.actionable ? <CheckCircle className="h-4 w-4 text-green-600" /> : <AlertCircle className="h-4 w-4 text-orange-500" />}
-              <span>{t('actionable')}: {report.aiPrioritization.actionable ? t('yes') : t('no')}</span>
-            </div>
-            <div className="text-xs">
-              {t('severityScore')}: {report.aiPrioritization.severityScore}/10
-            </div>
-          </div>
-        )}
       </CardContent>
       <CardFooter>
         <Button variant="outline" size="sm" className="w-full">
@@ -97,3 +85,4 @@ export default function ReportCard({ report }: ReportCardProps) {
     </Card>
   );
 }
+

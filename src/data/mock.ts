@@ -70,8 +70,6 @@ const reportTypesArray: ReportType[] = ['Wage Theft', 'Safety Violation', 'Unfai
 export const mockReports: Report[] = Array.from({ length: 6 }, (_, i) => {
   const randomDate = new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000);
   const reportType = reportTypesArray[i % reportTypesArray.length];
-  const isActionable = Math.random() > 0.3; // 70% chance of being actionable
-  const severityScore = Math.floor(Math.random() * 7) + 4; // Score between 4 and 10
 
   return {
     id: `report-${String(i + 1).padStart(3, '0')}`, // Ensure unique IDs that can be used as Firestore doc IDs
@@ -83,12 +81,8 @@ export const mockReports: Report[] = Array.from({ length: 6 }, (_, i) => {
     description: reportDescriptions[i % reportDescriptions.length],
     submittedAt: new Date(randomDate.getTime() + Math.floor(Math.random() * 24 * 60 * 60 * 1000)).toISOString(),
     status: (['Pending', 'Reviewed', 'ActionTaken'] as Report['status'][])[i % 3],
-    aiPrioritization: {
-      severityScore: severityScore,
-      reasoning: `AI analysis indicates a severity of ${severityScore}/10 due to factors like potential immediate danger or systemic wage issues.`,
-      actionable: isActionable,
-    },
     mediaProof: i % 2 === 0 ? { name: 'evidence.jpg', type: 'image/jpeg' } : undefined,
     // mediaProofUrl will be undefined for mock data initially
   };
 });
+

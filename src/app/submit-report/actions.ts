@@ -1,7 +1,6 @@
 
 "use server";
 
-import { prioritizeReportsBySeverity } from '@/ai/flows/prioritize-reports-by-severity';
 import type { Report, ReportType as TReportType } from '@/types'; // Renamed ReportType to avoid conflict
 import { z } from 'zod';
 import { db, storage } from '@/lib/firebase'; 
@@ -49,22 +48,11 @@ export async function submitReportAction(formData: FormData) {
     }
 
     const validatedData = validation.data;
-
-    // 1. AI Prioritization
-    let aiSummary;
-    try {
-        aiSummary = await prioritizeReportsBySeverity({
-        reportText: validatedData.description,
-      });
-    } catch (aiError) {
-      console.error("AI prioritization error:", aiError);
-      aiSummary = { severityScore: 0, reasoning: "AI analysis failed.", actionable: false };
-    }
     
     // Placeholder for dispatching logic - This part remains conceptual
     console.log(`[DISPATCH ACTION REQUIRED] Report for city: ${validatedData.city}, type: ${validatedData.typeOfIncidence}. Send to relevant authorities and media outlets.`);
 
-    // 2. Handle Media File Upload to Firebase Storage
+    // Handle Media File Upload to Firebase Storage
     let mediaProofUrl: string | undefined = undefined;
     let mediaProofDetails: Report['mediaProof'] | undefined = undefined;
 
@@ -82,12 +70,11 @@ export async function submitReportAction(formData: FormData) {
       }
     }
     
-    // 3. Store report in Firebase Firestore
+    // Store report in Firebase Firestore
     const reportToStore: Omit<Report, 'id' | 'submittedAt'> & { submittedAt: Timestamp } = {
       ...validatedData,
       submittedAt: serverTimestamp() as Timestamp, // Firestore server timestamp
       status: 'Pending',
-      aiPrioritization: aiSummary,
       ...(mediaProofUrl && { mediaProofUrl }), // Add URL if available
       ...(mediaProofDetails && { mediaProof: mediaProofDetails }), // Add name and type
     };
@@ -99,12 +86,7 @@ export async function submitReportAction(formData: FormData) {
 
     return { 
         success: true, 
-        reportId, 
-        aiSummary: { // Ensure aiSummary is always an object
-            severityScore: aiSummary.severityScore,
-            reasoning: aiSummary.reasoning,
-            actionable: aiSummary.actionable
-        }
+        reportId,
     };
 
   } catch (error) {
@@ -114,3 +96,4 @@ export async function submitReportAction(formData: FormData) {
     return { success: false, error: errorMessage };
   }
 }
+
