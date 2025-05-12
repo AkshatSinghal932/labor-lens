@@ -1,4 +1,3 @@
-
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,6 +21,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { CalendarIcon, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import { hi } from 'date-fns/locale/hi'; // Import for Hindi
+import { enUS } from 'date-fns/locale/en-US'; // Import for English (US)
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { ReportType } from "@/types";
 import { reportTypes } from "@/types";
@@ -59,6 +60,7 @@ export default function ReportSubmissionForm() {
       location: "",
       city: "",
       description: "",
+      // dateOfIncidence will be undefined initially
     },
   });
 
@@ -152,7 +154,7 @@ export default function ReportSubmissionForm() {
                       )}
                     >
                       {field.value ? (
-                        format(field.value, "PPP", { locale: language === 'hi' ? require('date-fns/locale/hi') : require('date-fns/locale/en-US') })
+                        format(field.value, "PPP", { locale: language === 'hi' ? hi : enUS })
                       ) : (
                         <span>{t('selectDate')}</span>
                       )}
