@@ -3,7 +3,7 @@ import type { Report } from '@/types';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MapPin, CalendarDays, Tag, HandCoins, Scale, HardHat, FileText, Building, ShieldAlert } from 'lucide-react';
+import { MapPin, CalendarDays, Tag, HandCoins, Scale, HardHat, FileText, Building, ShieldAlert, Sparkles } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface ReportCardProps {
@@ -38,7 +38,7 @@ export default function ReportCard({ report }: ReportCardProps) {
     switch (status) {
       case 'Pending': return 'default';
       case 'Reviewed': return 'secondary';
-      case 'ActionTaken': return 'outline'; // Or a success-like variant if available
+      case 'ActionTaken': return 'outline'; 
       default: return 'default';
     }
   };
@@ -50,7 +50,11 @@ export default function ReportCard({ report }: ReportCardProps) {
         <div className="flex justify-between items-start">
           <CardTitle className="text-lg mb-1 flex items-center gap-2">
             <ReportIcon className="h-6 w-6 text-primary" />
-            {`${t('reportId')}: ${report.id.substring(0, 8)}...`}
+            {report.headline ? (
+              <span className="truncate" title={report.headline}>{report.headline}</span>
+            ) : (
+              `${t('reportId')}: ${report.id.substring(0, 8)}...`
+            )}
           </CardTitle>
           <Badge variant={getStatusVariant(report.status)}>{report.status}</Badge>
         </div>
@@ -85,4 +89,3 @@ export default function ReportCard({ report }: ReportCardProps) {
     </Card>
   );
 }
-

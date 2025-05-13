@@ -14,6 +14,7 @@ export interface Report {
   mediaProofUrl?: string; // URL from Firebase Storage
   submittedAt: string; // ISO string date (converted from Firestore Timestamp)
   status: 'Pending' | 'Reviewed' | 'ActionTaken';
+  headline?: string; // AI-generated headline
 }
 
 export type ReportType = 'Wage Theft' | 'Safety Violation' | 'Unfair Wages' | 'Unsafe Working Conditions' | 'Other';

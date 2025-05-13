@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import ReportCard from '@/components/ReportCard';
 import type { Report as ReportType, ReportType as TReportType } from '@/types';
 import { reportTypes } from '@/types';
@@ -11,7 +12,9 @@ import { Search, Filter, ListFilter } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Skeleton } from '@/components/ui/skeleton';
 import { db } from '@/lib/firebase';
-import { collection, getDocs, query, orderBy, Timestamp, where, QueryConstraint } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy, Timestamp, where, QueryConstraint, doc, updateDoc } from 'firebase/firestore';
+import { generateReportHeadline, type GenerateReportHeadlineInput } from '@/ai/flows/generate-report-headline';
+
 
 export default function ViewReportsPage() {
   const { t, language } = useLanguage();
@@ -22,6 +25,46 @@ export default function ViewReportsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState<TReportType | 'all'>('all');
   const [locationFilter, setLocationFilter] = useState(''); // City filter
+
+  const fetchAndSetHeadlinesForAll = useCallback(async (fetchedReports: ReportType[]) => {
+    const reportsToUpdateHeadlines = fetchedReports.filter(report => !report.headline);
+    if (reportsToUpdateHeadlines.length === 0) {
+      setAllReports(fetchedReports);
+      setFilteredReports(fetchedReports); // Apply initial filters if any
+      return;
+    }
+
+    const reportsWithHeadlines = await Promise.all(
+      fetchedReports.map(async (report) => {
+        if (report.headline) {
+          return report;
+        }
+        try {
+          const headlineInput: GenerateReportHeadlineInput = {
+            description: report.description,
+            typeOfIncidence: report.typeOfIncidence,
+            location: report.location,
+            city: report.city,
+          };
+          const headlineOutput = await generateReportHeadline(headlineInput);
+          
+          if (db && process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID) {
+            const reportRef = doc(db, 'reports', report.id);
+            await updateDoc(reportRef, { headline: headlineOutput.headline });
+          }
+          return { ...report, headline: headlineOutput.headline };
+        } catch (error) {
+          console.error(`Error generating headline for report ${report.id}:`, error);
+          return { ...report, headline: `${report.typeOfIncidence} in ${report.city}` }; 
+        }
+      })
+    );
+    setAllReports(reportsWithHeadlines);
+    // Re-apply filters after headlines are fetched
+    // This ensures that the filtering logic uses the most up-to-date data, including headlines.
+    // The useEffect for filtering will handle this.
+  }, []);
+
 
   useEffect(() => {
     const fetchAllReports = async () => {
@@ -36,17 +79,22 @@ export default function ViewReportsPage() {
         }
         const reportsQuery = query(collection(db, 'reports'), orderBy('submittedAt', 'desc'));
         const querySnapshot = await getDocs(reportsQuery);
-        const fetchedReports = querySnapshot.docs.map(doc => {
-          const data = doc.data();
+        const fetchedReportsInitial = querySnapshot.docs.map(docSnap => {
+          const data = docSnap.data();
           return {
-            id: doc.id,
+            id: docSnap.id,
             ...data,
             submittedAt: (data.submittedAt as Timestamp).toDate().toISOString(),
-            dateOfIncidence: data.dateOfIncidence, 
+            dateOfIncidence: data.dateOfIncidence,
+            headline: data.headline || undefined,
           } as ReportType;
         });
-        setAllReports(fetchedReports);
-        setFilteredReports(fetchedReports); // Initially display all
+        // Set initial reports for quick display
+        setAllReports(fetchedReportsInitial); 
+        setFilteredReports(fetchedReportsInitial); // Display initially before headlines
+
+        await fetchAndSetHeadlinesForAll(fetchedReportsInitial);
+        
       } catch (error) {
         console.error("Error fetching all reports:", error);
       } finally {
@@ -60,7 +108,7 @@ export default function ViewReportsPage() {
       setIsLoading(false);
       console.warn("Firebase Project ID not set. Skipping data fetching for reports page.");
     }
-  }, []);
+  }, [fetchAndSetHeadlinesForAll]);
 
   useEffect(() => {
     let reports = [...allReports];
@@ -69,8 +117,9 @@ export default function ViewReportsPage() {
       reports = reports.filter(report =>
         report.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
         report.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        report.location.toLowerCase().includes(searchTerm.toLowerCase()) || // Search in location too
-        report.city.toLowerCase().includes(searchTerm.toLowerCase()) // Search in city too
+        report.location.toLowerCase().includes(searchTerm.toLowerCase()) || 
+        report.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (report.headline && report.headline.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
 
@@ -78,7 +127,7 @@ export default function ViewReportsPage() {
       reports = reports.filter(report => report.typeOfIncidence === selectedType);
     }
 
-    if (locationFilter) { // This filters by city
+    if (locationFilter) { 
       reports = reports.filter(report =>
         report.city.toLowerCase().includes(locationFilter.toLowerCase())
       );
@@ -113,7 +162,7 @@ export default function ViewReportsPage() {
             </label>
             <Input
               id="searchTerm"
-              placeholder="Keyword, ID, location, city..."
+              placeholder="Keyword, ID, location, city, headline..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -150,7 +199,7 @@ export default function ViewReportsPage() {
         </div>
       </div>
 
-      {isLoading ? (
+      {isLoading && filteredReports.length === 0 ? (
          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
          {[...Array(6)].map((_, i) => (
            <div key={i} className="flex flex-col space-y-3 p-4 border rounded-lg shadow-md">
