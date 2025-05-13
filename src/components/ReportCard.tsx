@@ -47,16 +47,16 @@ export default function ReportCard({ report }: ReportCardProps) {
   return (
     <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
       <CardHeader>
-        <div className="flex justify-between items-start">
-          <CardTitle className="text-lg mb-1 flex items-center gap-2">
-            <ReportIcon className="h-6 w-6 text-primary" />
+        <div className="flex justify-between items-start gap-2">
+          <CardTitle className="text-lg mb-1 flex items-center gap-2 min-w-0"> {/* Added min-w-0 here */}
+            <ReportIcon className="h-6 w-6 text-primary flex-shrink-0" />
             {report.headline ? (
               <span className="truncate" title={report.headline}>{report.headline}</span>
             ) : (
-              `${t('reportId')}: ${report.id.substring(0, 8)}...`
+              <span className="truncate">{`${t('reportId')}: ${report.id.substring(0, 8)}...`}</span>
             )}
           </CardTitle>
-          <Badge variant={getStatusVariant(report.status)}>{report.status}</Badge>
+          <Badge variant={getStatusVariant(report.status)} className="flex-shrink-0">{report.status}</Badge>
         </div>
         <CardDescription className="text-xs text-muted-foreground">
           {t('submittedAt', 'Submitted')}: {new Date(report.submittedAt).toLocaleDateString(language)}
@@ -89,3 +89,4 @@ export default function ReportCard({ report }: ReportCardProps) {
     </Card>
   );
 }
+
