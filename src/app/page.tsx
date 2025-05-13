@@ -102,7 +102,7 @@ export default function DashboardPage() {
           <h2 className="text-3xl font-semibold">{t('nearbyReportsTitle')}</h2>
         </div>
         {locationLoading && <p>{t('loading')} User location...</p>}
-        {locationError && <p className="text-destructive"> Location Permission Denied: {locationError} Displaying general recent reports.</p>}
+        {locationError && <p className="text-destructive">Location permission denied. Displaying recent reports.</p>}
         
         {isLoadingReports ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
