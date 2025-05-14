@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { Report } from '@/types';
@@ -14,7 +15,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Badge } from '@/components/ui/badge';
-import { CalendarDays, MapPin, Building, Tag, FileText, User, Clock, Image as ImageIcon, Link as LinkIcon, AlertTriangle, CheckCircle, Hourglass } from 'lucide-react';
+import { CalendarDays, MapPin, Building, Tag, FileText, Clock, Image as ImageIcon, Link as LinkIcon, AlertTriangle, CheckCircle, Hourglass } from 'lucide-react';
 import Image from 'next/image';
 
 interface ReportDetailsModalProps {
@@ -69,8 +70,8 @@ export default function ReportDetailsModal({ report, isOpen, onClose }: ReportDe
             {t('reportDetailsDescription', 'Detailed information about the submitted report.')}
           </DialogDescription>
         </DialogHeader>
-        <ScrollArea className="flex-grow">
-          <div className="space-y-4 px-6 py-4"> {/* Added px-6 for content padding, py-4 was already there */}
+        <ScrollArea className="flex-grow pr-6"> {/* Added pr-6 to ScrollArea to prevent content from overlapping scrollbar */}
+          <div className="space-y-4 py-4"> {/* Removed px-6 from here, as ScrollArea now handles padding */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <h3 className="font-semibold mb-1 flex items-center"><CalendarDays className="h-5 w-5 mr-2 text-primary" />{t('dateOfIncidenceLabel')}</h3>
@@ -144,12 +145,6 @@ export default function ReportDetailsModal({ report, isOpen, onClose }: ReportDe
                     <p className="text-sm text-muted-foreground">{t('noMediaProofSubmitted', 'No media proof was submitted with this report.')}</p>
                  </div>
             )}
-
-
-            <div>
-              <h3 className="font-semibold mb-1 flex items-center"><User className="h-5 w-5 mr-2 text-primary" />{t('anonymousUserIdLabel', 'Anonymous User ID')}</h3>
-              <p className="text-sm text-muted-foreground">{report.anonymousUserId}</p>
-            </div>
             
           </div>
         </ScrollArea>
