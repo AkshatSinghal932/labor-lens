@@ -7,7 +7,7 @@ import AchievementCard from '@/components/AchievementCard';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Skeleton } from '@/components/ui/skeleton';
 import { db } from '@/lib/firebase';
-import { collection, getDocs, orderBy } from 'firebase/firestore';
+import { collection, getDocs, orderBy, query } from 'firebase/firestore'; // Corrected import for query
 import { Award } from 'lucide-react';
 
 export default function AchievementsPage() {
@@ -25,8 +25,8 @@ export default function AchievementsPage() {
           setIsLoadingAchievements(false);
           return;
         }
-        // Assuming achievements might be ordered by a 'dateAchieved' or 'title' field
-        // For now, using title, adjust if you have a date field
+        // Assuming achievements might be ordered by a 'title' field
+        // Adjust if you have a date field or prefer another order
         const achievementsQuery = query(collection(db, 'achievements'), orderBy('title')); 
         const querySnapshot = await getDocs(achievementsQuery);
         const fetchedAchievements = querySnapshot.docs.map(docSnap => ({
@@ -36,6 +36,8 @@ export default function AchievementsPage() {
         setAchievements(fetchedAchievements);
       } catch (error) {
         console.error("Error fetching achievements:", error);
+        // Optionally, set an error state here to display to the user
+        setAchievements([]); // Clear achievements on error
       } finally {
         setIsLoadingAchievements(false);
       }
@@ -45,6 +47,7 @@ export default function AchievementsPage() {
       fetchAchievements();
     } else {
       setIsLoadingAchievements(false);
+      setAchievements([]); // Ensure achievements are empty if Firebase is not configured
       console.warn("Firebase Project ID not set. Skipping data fetching for achievements page.");
     }
 

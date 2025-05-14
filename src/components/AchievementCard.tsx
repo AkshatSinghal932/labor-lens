@@ -1,3 +1,4 @@
+
 import type { Achievement } from '@/types';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
@@ -10,6 +11,9 @@ interface AchievementCardProps {
 export default function AchievementCard({ achievement }: AchievementCardProps) {
   const IconComponent = achievement.iconName ? LucideIcons[achievement.iconName] as React.ElementType : null;
   
+  // Generate a simple data-ai-hint from the title (first two words, lowercase)
+  const aiHint = achievement.title.toLowerCase().split(' ').slice(0, 2).join(' ');
+
   return (
     <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
       {achievement.imageUrl && (
@@ -20,7 +24,19 @@ export default function AchievementCard({ achievement }: AchievementCardProps) {
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             style={{ objectFit: 'cover' }}
-            data-ai-hint={achievement.title.toLowerCase().split(' ').slice(0,2).join(' ')}
+            data-ai-hint={aiHint} // Added data-ai-hint
+          />
+        </div>
+      )}
+       {!achievement.imageUrl && ( // Fallback placeholder if no imageUrl
+        <div className="relative h-40 w-full bg-muted flex items-center justify-center">
+           <Image
+            src={`https://placehold.co/300x200.png`}
+            alt={achievement.title}
+            width={300}
+            height={200}
+            style={{ objectFit: 'cover' }}
+            data-ai-hint={aiHint}
           />
         </div>
       )}
