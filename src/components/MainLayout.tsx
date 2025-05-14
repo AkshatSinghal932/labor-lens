@@ -73,7 +73,7 @@ function LayoutContent({ children }: { children: ReactNode }) {
         <SidebarFooter className="border-t border-sidebar-border p-2">
            <div className="flex items-center justify-between">
              <p className="text-xs text-sidebar-foreground/70">© Labour Lens</p>
-             <LanguageSwitcher />
+             {sidebarState === 'expanded' && <LanguageSwitcher />}
            </div>
         </SidebarFooter>
       </Sidebar>
@@ -102,3 +102,4 @@ export default function MainLayout({ children }: { children: ReactNode }) {
     </SidebarProvider>
   );
 }
+
