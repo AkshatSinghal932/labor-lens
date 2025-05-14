@@ -15,7 +15,7 @@ import {
   SidebarMenuButton,
   SidebarInset,
   SidebarTrigger,
-  useSidebar, // Import useSidebar
+  useSidebar,
 } from '@/components/ui/sidebar';
 import AppLogo from '@/components/AppLogo';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
@@ -23,6 +23,7 @@ import { Home, FilePlus, ListFilter, Award } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Toaster } from '@/components/ui/toaster';
 import { useAnonymousId } from '@/hooks/useAnonymousId';
+import CustomLogoIcon from '@/components/CustomLogoIcon';
 
 interface NavItem {
   href: string;
@@ -80,7 +81,10 @@ function LayoutContent({ children }: { children: ReactNode }) {
       <SidebarInset>
         <header className="sticky top-0 z-10 flex h-14 items-center justify-between gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 py-2 md:hidden">
           <SidebarTrigger className="md:hidden" />
-          <div className="font-semibold text-lg">{t('appName')}</div>
+          <div className="flex items-center gap-2"> {/* Group logo and app name */}
+            <CustomLogoIcon className="h-6 w-6 text-primary" />
+            <div className="font-semibold text-lg">{t('appName')}</div>
+          </div>
           <LanguageSwitcher />
         </header>
         <main className="flex-1 p-4 md:p-6">
