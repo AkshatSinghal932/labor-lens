@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { Report } from '@/types';
@@ -69,8 +70,8 @@ export default function ReportDetailsModal({ report, isOpen, onClose }: ReportDe
             {t('reportDetailsDescription', 'Detailed information about the submitted report.')}
           </DialogDescription>
         </DialogHeader>
-        <ScrollArea className="flex-grow"> {/* Removed pr-6, padding handled by inner div now */}
-          <div className="space-y-4 p-4"> {/* Added p-4 for consistent content padding within scroll area */}
+        <ScrollArea className="flex-grow min-h-0"> {/* Added min-h-0 here */}
+          <div className="space-y-4 p-4"> 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <h3 className="font-semibold mb-1 flex items-center"><CalendarDays className="h-5 w-5 mr-2 text-primary" />{t('dateOfIncidenceLabel')}</h3>
