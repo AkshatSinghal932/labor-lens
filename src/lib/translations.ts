@@ -16,7 +16,7 @@ export const translations: Translations = {
   nearbyReportsTitle: { en: 'Nearby Recent Reports', hi: 'आस-पास की हालिया रिपोर्टें' },
   achievementsTitle: { en: 'Our Impact & Achievements', hi: 'हमारा प्रभाव और उपलब्धियां' },
   noNearbyReports: { en: 'No recent reports near your location.', hi: 'आपके स्थान के पास कोई हालिया रिपोर्ट नहीं है।' },
-  viewReportButton: { en: 'View Report', hi: 'रिपोर्ट देखें' },
+  viewReportButton: { en: 'View Full Report', hi: 'पूरी रिपोर्ट देखें' },
 
   // Submit Report Page
   submitReportTitle: { en: 'Submit a New Report', hi: 'नई रिपोर्ट जमा करें' },
@@ -27,7 +27,7 @@ export const translations: Translations = {
   typeOfIncidenceLabel: { en: 'Type of Incidence', hi: 'घटना का प्रकार' },
   selectTypePlaceholder: { en: 'Select type', hi: 'प्रकार चुनें' },
   descriptionLabel: { en: 'Description of Incidence', hi: 'घटना का विवरण' },
-  mediaProofLabel: { en: 'Photo/Video Proof (Optional)', hi: 'फोटो/वीडियो सबूत (वैकल्पिक)' },
+  mediaProofLabel: { en: 'Photo/Video Proof', hi: 'फोटो/वीडियो सबूत' },
   submitButton: { en: 'Submit Report', hi: 'रिपोर्ट जमा करें' },
   reportSubmittedSuccess: { en: 'Report submitted successfully!', hi: 'रिपोर्ट सफलतापूर्वक जमा की गई!' },
   reportSubmissionError: { en: 'Failed to submit report. Please try again.', hi: 'रिपोर्ट जमा करने में विफल। कृपया पुनः प्रयास करें।' },
@@ -49,7 +49,7 @@ export const translations: Translations = {
   allTypes: { en: 'All Types', hi: 'सभी प्रकार' },
   noReportsFound: { en: 'No reports found matching your criteria.', hi: 'आपके मानदंडों से मेल खाने वाली कोई रिपोर्ट नहीं मिली।' },
 
-  // Report Card
+  // Report Card & Details Modal
   reportId: { en: 'Report ID', hi: 'रिपोर्ट आईडी' },
   date: { en: 'Date', hi: 'तारीख' },
   location: { en: 'Location', hi: 'स्थान' },
@@ -58,8 +58,14 @@ export const translations: Translations = {
   submittedAt: { en: 'Submitted At', hi: 'जमा करने का समय'},
   yes: { en: 'Yes', hi: 'हाँ' },
   no: { en: 'No', hi: 'नहीं' },
+  reportDetailsDescription: { en: 'Detailed information about the submitted report.', hi: 'जमा की गई रिपोर्ट के बारे में विस्तृत जानकारी।' },
+  anonymousUserIdLabel: { en: 'Anonymous User ID', hi: 'अनाम उपयोगकर्ता आईडी' },
+  closeButton: { en: 'Close', hi: 'बंद करें' },
+  viewMediaProof: { en: 'View Media Proof', hi: 'मीडिया सबूत देखें'},
+  mediaProofNotAvailableOnline: { en: 'Media proof submitted (Name: {fileName}). Not available for online view or URL missing.', hi: 'मीडिया सबूत जमा किया गया (नाम: {fileName})। ऑनलाइन देखने के लिए उपलब्ध नहीं है या URL गायब है।' },
+  noMediaProofSubmitted: { en: 'No media proof was submitted with this report.', hi: 'इस रिपोर्ट के साथ कोई मीडिया सबूत जमा नहीं किया गया।' },
+
 
   // General
   loading: { en: 'Loading...', hi: 'लोड हो रहा है...' },
 };
-

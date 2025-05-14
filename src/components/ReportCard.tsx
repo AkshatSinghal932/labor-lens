@@ -1,10 +1,14 @@
 
+"use client";
+
 import type { Report } from '@/types';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MapPin, CalendarDays, Tag, HandCoins, Scale, HardHat, FileText, Building, ShieldAlert, Sparkles } from 'lucide-react';
+import { MapPin, CalendarDays, Tag, HandCoins, Scale, HardHat, FileText, Building, ShieldAlert, Eye } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useState } from 'react';
+import ReportDetailsModal from '@/components/ReportDetailsModal';
 
 interface ReportCardProps {
   report: Report;
@@ -20,6 +24,7 @@ const reportTypeIcons: { [key in Report['typeOfIncidence']]: React.ElementType }
 
 export default function ReportCard({ report }: ReportCardProps) {
   const { t, language } = useLanguage();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const ReportIcon = reportTypeIcons[report.typeOfIncidence] || FileText;
 
@@ -43,50 +48,62 @@ export default function ReportCard({ report }: ReportCardProps) {
     }
   };
 
+  const handleViewReportClick = () => {
+    setIsModalOpen(true);
+  };
 
   return (
-    <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
-      <CardHeader>
-        <div className="flex justify-between items-start gap-2">
-          <CardTitle className="text-lg mb-1 flex items-center gap-2 min-w-0"> {/* Added min-w-0 here */}
-            <ReportIcon className="h-6 w-6 text-primary flex-shrink-0" />
-            {report.headline ? (
-              <span className="truncate" title={report.headline}>{report.headline}</span>
-            ) : (
-              <span className="truncate">{`${t('reportId')}: ${report.id.substring(0, 8)}...`}</span>
-            )}
-          </CardTitle>
-          <Badge variant={getStatusVariant(report.status)} className="flex-shrink-0">{report.status}</Badge>
-        </div>
-        <CardDescription className="text-xs text-muted-foreground">
-          {t('submittedAt', 'Submitted')}: {new Date(report.submittedAt).toLocaleDateString(language)}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="flex-grow space-y-3">
-        <div className="flex items-center gap-2 text-sm">
-          <CalendarDays className="h-4 w-4 text-muted-foreground" />
-          <span>{t('date')}: {new Date(report.dateOfIncidence).toLocaleDateString(language)}</span>
-        </div>
-        <div className="flex items-center gap-2 text-sm">
-          <MapPin className="h-4 w-4 text-muted-foreground" />
-          <span>{t('location')}: {report.location}</span>
-        </div>
-        <div className="flex items-center gap-2 text-sm">
-          <Building className="h-4 w-4 text-muted-foreground" />
-          <span>{t('cityLabel')}: {report.city}</span>
-        </div>
-        <div className="flex items-center gap-2 text-sm">
-          <Tag className="h-4 w-4 text-muted-foreground" />
-          <span>{t('type')}: {getTranslatedReportType(report.typeOfIncidence)}</span>
-        </div>
-        <p className="text-sm line-clamp-3">{report.description}</p>
-      </CardContent>
-      <CardFooter>
-        <Button variant="outline" size="sm" className="w-full">
-          {t('viewReportButton')}
-        </Button>
-      </CardFooter>
-    </Card>
+    <>
+      <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
+        <CardHeader>
+          <div className="flex justify-between items-start gap-2">
+            <CardTitle className="text-lg mb-1 flex items-center gap-2 min-w-0">
+              <ReportIcon className="h-6 w-6 text-primary flex-shrink-0" />
+              {report.headline ? (
+                <span className="truncate" title={report.headline}>{report.headline}</span>
+              ) : (
+                <span className="truncate">{`${t('reportId')}: ${report.id.substring(0, 8)}...`}</span>
+              )}
+            </CardTitle>
+            <Badge variant={getStatusVariant(report.status)} className="flex-shrink-0">{report.status}</Badge>
+          </div>
+          <CardDescription className="text-xs text-muted-foreground">
+            {t('submittedAt', 'Submitted')}: {new Date(report.submittedAt).toLocaleDateString(language)}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex-grow space-y-3">
+          <div className="flex items-center gap-2 text-sm">
+            <CalendarDays className="h-4 w-4 text-muted-foreground" />
+            <span>{t('date')}: {new Date(report.dateOfIncidence).toLocaleDateString(language)}</span>
+          </div>
+          <div className="flex items-center gap-2 text-sm">
+            <MapPin className="h-4 w-4 text-muted-foreground" />
+            <span>{t('location')}: {report.location}</span>
+          </div>
+          <div className="flex items-center gap-2 text-sm">
+            <Building className="h-4 w-4 text-muted-foreground" />
+            <span>{t('cityLabel')}: {report.city}</span>
+          </div>
+          <div className="flex items-center gap-2 text-sm">
+            <Tag className="h-4 w-4 text-muted-foreground" />
+            <span>{t('type')}: {getTranslatedReportType(report.typeOfIncidence)}</span>
+          </div>
+          <p className="text-sm line-clamp-3">{report.description}</p>
+        </CardContent>
+        <CardFooter>
+          <Button variant="outline" size="sm" className="w-full" onClick={handleViewReportClick}>
+            <Eye className="mr-2 h-4 w-4" />
+            {t('viewReportButton')}
+          </Button>
+        </CardFooter>
+      </Card>
+      {isModalOpen && (
+        <ReportDetailsModal
+          report={report}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
+      )}
+    </>
   );
 }
-
