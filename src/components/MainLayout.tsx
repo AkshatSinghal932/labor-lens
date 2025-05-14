@@ -15,13 +15,14 @@ import {
   SidebarMenuButton,
   SidebarInset,
   SidebarTrigger,
+  useSidebar, // Import useSidebar
 } from '@/components/ui/sidebar';
 import AppLogo from '@/components/AppLogo';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-import { Home, FilePlus, ListFilter, Award } from 'lucide-react'; // Added Award icon
+import { Home, FilePlus, ListFilter, Award } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Toaster } from '@/components/ui/toaster';
-import { useAnonymousId } from '@/hooks/useAnonymousId'; // Initialize anonymous ID
+import { useAnonymousId } from '@/hooks/useAnonymousId';
 
 interface NavItem {
   href: string;
@@ -29,23 +30,25 @@ interface NavItem {
   icon: React.ElementType;
 }
 
-export default function MainLayout({ children }: { children: ReactNode }) {
+// Inner component to access sidebar context
+function LayoutContent({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { t } = useLanguage();
-  useAnonymousId(); // Ensures anonymous ID is generated/retrieved on client mount
+  const { sidebarState } = useSidebar(); // Get sidebar state
 
   const navItems: NavItem[] = [
     { href: '/', labelKey: 'navDashboard', icon: Home },
     { href: '/submit-report', labelKey: 'navSubmitReport', icon: FilePlus },
     { href: '/reports', labelKey: 'navViewReports', icon: ListFilter },
-    { href: '/achievements', labelKey: 'navAchievements', icon: Award }, // Added Achievements nav item
+    { href: '/achievements', labelKey: 'navAchievements', icon: Award },
   ];
 
   return (
-    <SidebarProvider defaultOpen={false}> {/* Default to collapsed */}
+    <>
       <Sidebar>
         <SidebarHeader>
-          <AppLogo />
+          {/* Pass collapsed state to AppLogo */}
+          <AppLogo collapsed={sidebarState === 'collapsed'} />
         </SidebarHeader>
         <SidebarContent>
           <SidebarMenu>
@@ -85,6 +88,17 @@ export default function MainLayout({ children }: { children: ReactNode }) {
         </main>
         <Toaster />
       </SidebarInset>
+    </>
+  );
+}
+
+
+export default function MainLayout({ children }: { children: ReactNode }) {
+  useAnonymousId(); // Ensures anonymous ID is generated/retrieved on client mount
+
+  return (
+    <SidebarProvider defaultOpen={false}> {/* Default to collapsed */}
+      <LayoutContent>{children}</LayoutContent>
     </SidebarProvider>
   );
 }
