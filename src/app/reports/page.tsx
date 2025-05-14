@@ -142,9 +142,13 @@ export default function ViewReportsPage() {
       'Safety Violation': 'safetyViolation',
       'Unfair Wages': 'unfairWages',
       'Unsafe Working Conditions': 'unsafeWorkingConditions',
+      'Child Labor': 'childLabor',
+      'Harassment': 'harassment',
+      'Discrimination': 'discrimination',
       'Other': 'other',
     } as const;
-    return t(keyMap[typeKey] as keyof import('@/types').Translations);
+    const translationKey = keyMap[typeKey as keyof typeof keyMap];
+    return translationKey ? t(translationKey as keyof import('@/types').Translations) : typeKey;
   };
 
   return (

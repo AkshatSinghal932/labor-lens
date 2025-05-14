@@ -2,6 +2,7 @@
 "use server";
 
 import type { Report, ReportType as TReportType } from '@/types'; // Renamed ReportType to avoid conflict
+import { reportTypes } from '@/types'; // Import reportTypes
 import { z } from 'zod';
 import { db, storage } from '@/lib/firebase'; 
 import { collection, addDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
@@ -11,7 +12,7 @@ const reportSchema = z.object({
   dateOfIncidence: z.string().datetime(), // Expect ISO string from form
   location: z.string().min(1),
   city: z.string().min(1),
-  typeOfIncidence: z.enum(['Wage Theft', 'Safety Violation', 'Unfair Wages', 'Unsafe Working Conditions', 'Other']),
+  typeOfIncidence: z.enum(reportTypes as [string, ...string[]]), // Use imported reportTypes
   description: z.string().min(10),
   anonymousUserId: z.string().uuid(),
 });
@@ -96,4 +97,3 @@ export async function submitReportAction(formData: FormData) {
     return { success: false, error: errorMessage };
   }
 }
-

@@ -26,7 +26,7 @@ import { format } from "date-fns";
 import { hi } from 'date-fns/locale/hi';
 import { enUS } from 'date-fns/locale/en-US';
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { ReportType } from "@/types";
+import type { ReportType as TReportType } from "@/types"; // Renamed to TReportType
 import { reportTypes } from "@/types";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -53,7 +53,7 @@ export default function ReportSubmissionForm() {
     }),
     location: z.string().min(1, t('fieldRequired')),
     city: z.string().min(1, t('fieldRequired')),
-    typeOfIncidence: z.enum(reportTypes, {
+    typeOfIncidence: z.enum(reportTypes as [string, ...string[]], { // Cast to satisfy z.enum
       required_error: t('fieldRequired'),
     }),
     description: z.string().min(10, t('fieldRequired')),
@@ -132,15 +132,20 @@ export default function ReportSubmissionForm() {
     }
   };
 
-  const getTranslatedReportType = (typeKey: ReportType) => {
+  const getTranslatedReportType = (typeKey: TReportType) => {
     const keyMap = {
       'Wage Theft': 'wageTheft',
       'Safety Violation': 'safetyViolation',
       'Unfair Wages': 'unfairWages',
       'Unsafe Working Conditions': 'unsafeWorkingConditions',
+      'Child Labor': 'childLabor',
+      'Harassment': 'harassment',
+      'Discrimination': 'discrimination',
       'Other': 'other',
     } as const;
-    return t(keyMap[typeKey] as keyof import('@/types').Translations);
+    // Ensure the key exists in keyMap before trying to access it
+    const translationKey = keyMap[typeKey as keyof typeof keyMap];
+    return translationKey ? t(translationKey as keyof import('@/types').Translations) : typeKey;
   };
 
   return (

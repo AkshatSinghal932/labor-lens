@@ -5,7 +5,7 @@ import type { Report } from '@/types';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MapPin, CalendarDays, Tag, HandCoins, Scale, HardHat, FileText, Building, ShieldAlert, Eye } from 'lucide-react';
+import { MapPin, CalendarDays, Tag, HandCoins, Scale, HardHat, FileText, Building, ShieldAlert, Eye, UserX, AlertOctagon, UsersRound } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useState } from 'react';
 import ReportDetailsModal from '@/components/ReportDetailsModal';
@@ -19,6 +19,9 @@ const reportTypeIcons: { [key in Report['typeOfIncidence']]: React.ElementType }
   'Safety Violation': ShieldAlert,
   'Unfair Wages': Scale,
   'Unsafe Working Conditions': HardHat,
+  'Child Labor': UserX,
+  'Harassment': AlertOctagon,
+  'Discrimination': UsersRound,
   'Other': FileText,
 };
 
@@ -34,9 +37,13 @@ export default function ReportCard({ report }: ReportCardProps) {
       'Safety Violation': 'safetyViolation',
       'Unfair Wages': 'unfairWages',
       'Unsafe Working Conditions': 'unsafeWorkingConditions',
+      'Child Labor': 'childLabor',
+      'Harassment': 'harassment',
+      'Discrimination': 'discrimination',
       'Other': 'other',
     } as const;
-    return t(keyMap[typeKey] as keyof import('@/types').Translations);
+    const translationKey = keyMap[typeKey as keyof typeof keyMap];
+    return translationKey ? t(translationKey as keyof import('@/types').Translations) : typeKey;
   };
   
   const getStatusVariant = (status: Report['status']): "default" | "secondary" | "destructive" | "outline" => {
@@ -108,4 +115,3 @@ export default function ReportCard({ report }: ReportCardProps) {
     </>
   );
 }
-

@@ -41,6 +41,9 @@ export const translations: Translations = {
   safetyViolation: { en: 'Safety Violation', hi: 'सुरक्षा उल्लंघन' },
   unfairWages: { en: 'Unfair Wages', hi: 'अनुचित मजदूरी' },
   unsafeWorkingConditions: { en: 'Unsafe Working Conditions', hi: 'असुरक्षित काम करने की स्थिति' },
+  childLabor: { en: 'Child Labor', hi: 'बाल श्रम' },
+  harassment: { en: 'Harassment', hi: 'उत्पीड़न' },
+  discrimination: { en: 'Discrimination', hi: 'भेदभाव' },
   other: { en: 'Other', hi: 'अन्य' },
   
   // Reports Page

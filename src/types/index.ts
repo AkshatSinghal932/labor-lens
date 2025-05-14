@@ -17,9 +17,26 @@ export interface Report {
   headline?: string; // AI-generated headline
 }
 
-export type ReportType = 'Wage Theft' | 'Safety Violation' | 'Unfair Wages' | 'Unsafe Working Conditions' | 'Other';
+export type ReportType = 
+  | 'Wage Theft' 
+  | 'Safety Violation' 
+  | 'Unfair Wages' 
+  | 'Unsafe Working Conditions' 
+  | 'Child Labor'
+  | 'Harassment'
+  | 'Discrimination'
+  | 'Other';
 
-export const reportTypes: ReportType[] = ['Wage Theft', 'Safety Violation', 'Unfair Wages', 'Unsafe Working Conditions', 'Other'];
+export const reportTypes: ReportType[] = [
+  'Wage Theft', 
+  'Safety Violation', 
+  'Unfair Wages', 
+  'Unsafe Working Conditions',
+  'Child Labor',
+  'Harassment',
+  'Discrimination',
+  'Other'
+];
 
 export interface Achievement {
   id: string; // Firestore document ID
@@ -37,4 +54,3 @@ export interface Translations {
 }
 
 export type Language = 'en' | 'hi';
-

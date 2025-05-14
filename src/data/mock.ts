@@ -44,7 +44,10 @@ const reportDescriptions = [
   "Textile factory 'WearWell Apparels' has extremely poor ventilation and excessive heat, leading to workers fainting. Emergency exits are also partially blocked with materials.",
   "Delivery drivers for 'Speedy Couriers' are forced to work 12-14 hour shifts without adequate breaks. Their per-delivery pay rate effectively puts them below minimum wage for the hours worked.",
   "Farm workers at 'Green Valley Farms' are exposed to pesticides without protective gear. Several workers have reported skin rashes and respiratory problems.",
-  "Call center 'Global Connect' mandates unpaid overtime, threatening termination for those who refuse. The work environment is also highly stressful with constant surveillance."
+  "Call center 'Global Connect' mandates unpaid overtime, threatening termination for those who refuse. The work environment is also highly stressful with constant surveillance.",
+  "Allegations of young children being employed at 'Shiny Gems Workshop' under hazardous conditions.",
+  "Reports of persistent verbal abuse and intimidation by supervisors at 'Tech Solutions Inc'.",
+  "Claims that 'RetailMart' systematically denies promotions to employees based on their ethnic background."
 ];
 
 const locations = [
@@ -53,7 +56,10 @@ const locations = [
   "789 Pine Lane",
   "101 Maple Drive",
   "202 Birch Road",
-  "303 Cedar Court"
+  "303 Cedar Court",
+  "55 Diamond Road",
+  "88 Innovation Park",
+  "12 Global Plaza"
 ];
 
 const cities = [
@@ -62,12 +68,24 @@ const cities = [
   "Gotham City",
   "Star City",
   "Central City",
-  "Coast City"
+  "Coast City",
+  "Gemstone City",
+  "Futureville",
+  "Unity Town"
 ];
 
-const reportTypesArray: ReportType[] = ['Wage Theft', 'Safety Violation', 'Unfair Wages', 'Unsafe Working Conditions'];
+const reportTypesArray: ReportType[] = [
+    'Wage Theft', 
+    'Safety Violation', 
+    'Unfair Wages', 
+    'Unsafe Working Conditions',
+    'Child Labor',
+    'Harassment',
+    'Discrimination',
+    'Other'
+];
 
-export const mockReports: Report[] = Array.from({ length: 6 }, (_, i) => {
+export const mockReports: Report[] = Array.from({ length: 9 }, (_, i) => { // Increased length to 9 to better cover new types
   const randomDate = new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000);
   const reportType = reportTypesArray[i % reportTypesArray.length];
 
@@ -85,4 +103,3 @@ export const mockReports: Report[] = Array.from({ length: 6 }, (_, i) => {
     // mediaProofUrl will be undefined for mock data initially
   };
 });
-
