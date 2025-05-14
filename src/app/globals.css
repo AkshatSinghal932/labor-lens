@@ -8,7 +8,7 @@ body {
 
 @layer base {
   :root {
-    --background: 0 0% 100%; /* White */
+    --background: 0 0% 96%; /* Light Gray - Changed from White */
     --foreground: 0 0% 0%; /* Black */
 
     --card: 0 0% 98%; /* Off-white */
@@ -57,7 +57,7 @@ body {
   }
 
   .dark {
-    --background: 0 0% 0%; /* Black */
+    --background: 0 0% 8%; /* Very Dark Gray - Changed from Black */
     --foreground: 0 0% 100%; /* White */
 
     --card: 0 0% 10%; /* Off-black */
