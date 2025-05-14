@@ -5,7 +5,7 @@ const CustomLogoIcon: FC<SVGProps<SVGSVGElement>> = (props) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24" // Standard icon viewBox
-    fill="currentColor" // Ensures the color can be controlled by CSS (e.g., text-sidebar-primary)
+    fill="black" // Ensures the color is explicitly black
     {...props}
   >
     {/* A simple square, representing the black image provided by the user. */}
