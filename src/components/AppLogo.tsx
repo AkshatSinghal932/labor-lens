@@ -1,4 +1,4 @@
-import { Building2 } from 'lucide-react';
+import CustomLogoIcon from '@/components/CustomLogoIcon';
 import type { FC } from 'react';
 
 interface AppLogoProps {
@@ -8,7 +8,7 @@ interface AppLogoProps {
 const AppLogo: FC<AppLogoProps> = ({ collapsed }) => {
   return (
     <div className="flex items-center gap-2 p-2 bg-sidebar text-sidebar-foreground">
-      <Building2 className="h-6 w-6 text-sidebar-primary" />
+      <CustomLogoIcon className="h-6 w-6 text-sidebar-primary" />
       {!collapsed && (
         <h1 className="text-xl font-semibold">
           Labour Lens
