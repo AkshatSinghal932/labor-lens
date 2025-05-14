@@ -1,4 +1,3 @@
-
 "use client";
 
 import type { Report } from '@/types';
@@ -70,8 +69,8 @@ export default function ReportDetailsModal({ report, isOpen, onClose }: ReportDe
             {t('reportDetailsDescription', 'Detailed information about the submitted report.')}
           </DialogDescription>
         </DialogHeader>
-        <ScrollArea className="flex-grow pr-6"> {/* Added pr-6 to ScrollArea to prevent content from overlapping scrollbar */}
-          <div className="space-y-4 py-4"> {/* Removed px-6 from here, as ScrollArea now handles padding */}
+        <ScrollArea className="flex-grow"> {/* Removed pr-6, padding handled by inner div now */}
+          <div className="space-y-4 p-4"> {/* Added p-4 for consistent content padding within scroll area */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <h3 className="font-semibold mb-1 flex items-center"><CalendarDays className="h-5 w-5 mr-2 text-primary" />{t('dateOfIncidenceLabel')}</h3>
@@ -159,4 +158,3 @@ export default function ReportDetailsModal({ report, isOpen, onClose }: ReportDe
     </Dialog>
   );
 }
-
