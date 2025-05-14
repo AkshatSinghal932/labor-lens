@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -72,18 +73,21 @@ const SidebarProvider = React.forwardRef<
     const isMobile = useIsMobile();
     const [openMobile, setOpenMobile] = React.useState(false);
     
-    const [_pinnedOpen, _setPinnedOpen] = React.useState(() => {
-      if (typeof document !== 'undefined') {
+    // Initialize with defaultOpen, cookie will be read in useEffect
+    const [_pinnedOpen, _setPinnedOpen] = React.useState(defaultOpen);
+
+    React.useEffect(() => {
+      if (typeof document !== 'undefined' && pinnedOpenProp === undefined) { // Only read from cookie if not controlled
         const cookieValue = document.cookie
           .split("; ")
           .find((row) => row.startsWith(`${SIDEBAR_COOKIE_NAME}=`))
           ?.split("=")[1];
         if (cookieValue) {
-          return cookieValue === "true";
+          _setPinnedOpen(cookieValue === "true");
         }
+        // If no cookie, it remains as defaultOpen, which is intended.
       }
-      return defaultOpen;
-    });
+    }, [pinnedOpenProp]); // Rerun if pinnedOpenProp changes, though cookie is only read if it's undefined.
 
     const pinnedOpen = pinnedOpenProp ?? _pinnedOpen;
     const [isHovering, setIsHovering] = React.useState(false);
@@ -102,7 +106,7 @@ const SidebarProvider = React.forwardRef<
           document.cookie = `${SIDEBAR_COOKIE_NAME}=${newPinnedOpenState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
         }
       },
-      [pinnedOpen, _setPinnedOpen, setPinnedOpenProp]
+      [pinnedOpen, _setPinnedOpen, setPinnedOpenProp] // Ensure `pinnedOpen` is a dependency for the callback
     );
 
     const toggleSidebar = React.useCallback(() => {
