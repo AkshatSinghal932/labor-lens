@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { ReactNode } from 'react';
@@ -17,7 +18,7 @@ import {
 } from '@/components/ui/sidebar';
 import AppLogo from '@/components/AppLogo';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-import { Home, FilePlus, ListFilter, UserCircle, Settings } from 'lucide-react';
+import { Home, FilePlus, ListFilter, Award } from 'lucide-react'; // Added Award icon
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Toaster } from '@/components/ui/toaster';
 import { useAnonymousId } from '@/hooks/useAnonymousId'; // Initialize anonymous ID
@@ -37,10 +38,11 @@ export default function MainLayout({ children }: { children: ReactNode }) {
     { href: '/', labelKey: 'navDashboard', icon: Home },
     { href: '/submit-report', labelKey: 'navSubmitReport', icon: FilePlus },
     { href: '/reports', labelKey: 'navViewReports', icon: ListFilter },
+    { href: '/achievements', labelKey: 'navAchievements', icon: Award }, // Added Achievements nav item
   ];
 
   return (
-    <SidebarProvider defaultOpen>
+    <SidebarProvider defaultOpen={false}> {/* Default to collapsed */}
       <Sidebar>
         <SidebarHeader>
           <AppLogo />

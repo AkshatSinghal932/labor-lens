@@ -7,6 +7,7 @@ export const translations: Translations = {
   navDashboard: { en: 'Dashboard', hi: 'डैशबोर्ड' },
   navSubmitReport: { en: 'Submit Report', hi: 'रिपोर्ट जमा करें' },
   navViewReports: { en: 'View Reports', hi: 'रिपोर्ट देखें' },
+  navAchievements: { en: 'Achievements', hi: 'उपलब्धियां' }, // Added translation for Achievements
   language: { en: 'Language', hi: 'भाषा' },
   english: { en: 'English', hi: 'अंग्रेज़ी' },
   hindi: { en: 'Hindi', hi: 'हिन्दी' },
@@ -49,6 +50,10 @@ export const translations: Translations = {
   allTypes: { en: 'All Types', hi: 'सभी प्रकार' },
   noReportsFound: { en: 'No reports found matching your criteria.', hi: 'आपके मानदंडों से मेल खाने वाली कोई रिपोर्ट नहीं मिली।' },
 
+  // Achievements Page
+  achievementsPageTitle: { en: 'Our Achievements', hi: 'हमारी उपलब्धियां' }, // Added for new achievements page
+  noAchievements: { en: 'No achievements to display yet.', hi: 'अभी प्रदर्शित करने के लिए कोई उपलब्धि नहीं है।' }, // Added for new achievements page
+
   // Report Card & Details Modal
   reportId: { en: 'Report ID', hi: 'रिपोर्ट आईडी' },
   date: { en: 'Date', hi: 'तारीख' },
@@ -59,7 +64,6 @@ export const translations: Translations = {
   yes: { en: 'Yes', hi: 'हाँ' },
   no: { en: 'No', hi: 'नहीं' },
   reportDetailsDescription: { en: 'Detailed information about the submitted report.', hi: 'जमा की गई रिपोर्ट के बारे में विस्तृत जानकारी।' },
-  anonymousUserIdLabel: { en: 'Anonymous User ID', hi: 'अनाम उपयोगकर्ता आईडी' },
   closeButton: { en: 'Close', hi: 'बंद करें' },
   viewMediaProof: { en: 'View Media Proof', hi: 'मीडिया सबूत देखें'},
   mediaProofNotAvailableOnline: { en: 'Media proof submitted (Name: {fileName}). Not available for online view or URL missing.', hi: 'मीडिया सबूत जमा किया गया (नाम: {fileName})। ऑनलाइन देखने के लिए उपलब्ध नहीं है या URL गायब है।' },
